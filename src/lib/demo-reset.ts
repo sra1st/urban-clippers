@@ -41,27 +41,28 @@ export async function resetDemo(): Promise<{ bookings: number; days: number }> {
     await x(c, "DELETE FROM users WHERE is_demo = 0 AND role = 'client'");
 
     // 2. Barbers, services, hours back to defaults.
-    for (const b of BARBERS) {
-      await x(c, "INSERT INTO barbers (id, name, is_active) VALUES (?, ?, 1) ON DUPLICATE KEY UPDATE name = VALUES(name), is_active = 1", [b.id, b.name]);
-    }
-    for (const s of SERVICES) {
-      await x(
-        c,
-        `INSERT INTO services (id, category, name, description, price_bdt, sort_order, is_active) VALUES (?, ?, ?, ?, ?, ?, 1)
-         ON DUPLICATE KEY UPDATE category = VALUES(category), name = VALUES(name), description = VALUES(description),
-                                 price_bdt = VALUES(price_bdt), sort_order = VALUES(sort_order), is_active = 1`,
-        [s.id, s.category, s.name, s.description, s.price, s.sort],
-      );
-    }
+    // One multi-row statement per table. Every query is a network round trip to the database, and
+    // the nightly reset has to finish inside Netlify's 30-second function limit.
+    await x(
+      c,
+      `INSERT INTO barbers (id, name, is_active) VALUES ${BARBERS.map(() => "(?, ?, 1)").join(", ")}
+       ON DUPLICATE KEY UPDATE name = VALUES(name), is_active = 1`,
+      BARBERS.flatMap((b) => [b.id, b.name]),
+    );
+    await x(
+      c,
+      `INSERT INTO services (id, category, name, description, price_bdt, sort_order, is_active) VALUES ${SERVICES.map(() => "(?, ?, ?, ?, ?, ?, 1)").join(", ")}
+       ON DUPLICATE KEY UPDATE category = VALUES(category), name = VALUES(name), description = VALUES(description),
+                               price_bdt = VALUES(price_bdt), sort_order = VALUES(sort_order), is_active = 1`,
+      SERVICES.flatMap((s) => [s.id, s.category, s.name, s.description, s.price, s.sort]),
+    );
     await x(c, `DELETE FROM services WHERE id NOT IN (${SERVICES.map(() => "?").join(",")})`, SERVICES.map((s) => s.id));
-    for (const h of HOURS) {
-      await x(
-        c,
-        `INSERT INTO shop_hours (weekday, is_closed, open_time, close_time) VALUES (?, ?, ?, ?)
-         ON DUPLICATE KEY UPDATE is_closed = VALUES(is_closed), open_time = VALUES(open_time), close_time = VALUES(close_time)`,
-        [h.weekday, h.closed ? 1 : 0, `${h.open}:00`, `${h.close}:00`],
-      );
-    }
+    await x(
+      c,
+      `INSERT INTO shop_hours (weekday, is_closed, open_time, close_time) VALUES ${HOURS.map(() => "(?, ?, ?, ?)").join(", ")}
+       ON DUPLICATE KEY UPDATE is_closed = VALUES(is_closed), open_time = VALUES(open_time), close_time = VALUES(close_time)`,
+      HOURS.flatMap((h) => [h.weekday, h.closed ? 1 : 0, `${h.open}:00`, `${h.close}:00`]),
+    );
 
     // 3. Demo accounts (their passwords are random: they can only be entered with the demo buttons).
     const upsertUser = async (name: string, email: string, phone: string, hash: string, role: "client" | "admin", demo: boolean) => {
@@ -86,6 +87,18 @@ export async function resetDemo(): Promise<{ bookings: number; days: number }> {
     const codes = new Set<string>();
     const names = DEMO_CUSTOMERS;
     let phoneSeq = 1000;
+    const rows: {
+      code: string;
+      userId: number | null;
+      name: string;
+      phone: string;
+      barberId: number;
+      date: string;
+      time: string;
+      status: string;
+      total: number;
+      picked: (typeof SERVICES)[number][];
+    }[] = [];
 
     const insert = async (opts: {
       date: string;
@@ -102,18 +115,8 @@ export async function resetDemo(): Promise<{ bookings: number; days: number }> {
       codes.add(code);
       const picked = SERVICES.filter((s) => opts.services.includes(s.id));
       const total = picked.reduce((n, s) => n + s.price, 0);
-      const res = await x(
-        c,
-        `INSERT INTO bookings (code, user_id, customer_name, phone, barber_id, slot_date, slot_time, status, source, total_bdt)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'online', ?)`,
-        [code, opts.userId ?? null, opts.name, opts.phone, opts.barberId, opts.date, `${opts.time}:00`, opts.status, total],
-      );
-      if (opts.status !== "cancelled") {
-        await x(c, "INSERT INTO booking_slots (barber_id, slot_date, slot_time, booking_id) VALUES (?, ?, ?, ?)", [opts.barberId, opts.date, `${opts.time}:00`, res.insertId]);
-      }
-      for (const s of picked) {
-        await x(c, "INSERT INTO booking_services (booking_id, service_id, service_name, price_bdt) VALUES (?, ?, ?, ?)", [res.insertId, s.id, s.name, s.price]);
-      }
+      // Collected here and written in three multi-row statements after the loops (see "Flush" below).
+      rows.push({ code, userId: opts.userId ?? null, name: opts.name, phone: opts.phone, barberId: opts.barberId, date: opts.date, time: `${opts.time}:00`, status: opts.status, total, picked });
       const key = `${opts.date}|${opts.time}`;
       if (!used.has(key)) used.set(key, new Set());
       used.get(key)!.add(opts.barberId);
@@ -159,6 +162,32 @@ export async function resetDemo(): Promise<{ bookings: number; days: number }> {
           n--;
         }
       }
+    }
+
+    // Flush: bookings first, then look their ids up by code (no explicit ids, so the database's
+    // own auto-increment stays in charge), then the slot rows and service rows that need those ids.
+    if (rows.length) {
+      await x(
+        c,
+        `INSERT INTO bookings (code, user_id, customer_name, phone, barber_id, slot_date, slot_time, status, source, total_bdt)
+         VALUES ${rows.map(() => "(?, ?, ?, ?, ?, ?, ?, ?, 'online', ?)").join(", ")}`,
+        rows.flatMap((r) => [r.code, r.userId, r.name, r.phone, r.barberId, r.date, r.time, r.status, r.total]),
+      );
+      const idByCode = new Map((await q<RowDataPacket>(c, "SELECT id, code FROM bookings")).map((b) => [String(b.code), Number(b.id)]));
+      const live = rows.filter((r) => r.status !== "cancelled");
+      if (live.length) {
+        await x(
+          c,
+          `INSERT INTO booking_slots (barber_id, slot_date, slot_time, booking_id) VALUES ${live.map(() => "(?, ?, ?, ?)").join(", ")}`,
+          live.flatMap((r) => [r.barberId, r.date, r.time, idByCode.get(r.code)!]),
+        );
+      }
+      const lines = rows.flatMap((r) => r.picked.map((s) => ({ id: idByCode.get(r.code)!, s })));
+      await x(
+        c,
+        `INSERT INTO booking_services (booking_id, service_id, service_name, price_bdt) VALUES ${lines.map(() => "(?, ?, ?, ?)").join(", ")}`,
+        lines.flatMap((l) => [l.id, l.s.id, l.s.name, l.s.price]),
+      );
     }
   });
 
