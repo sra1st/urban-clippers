@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <clipPath id="c"><rect x="4" y="4" width="56" height="56" rx="14"/></clipPath>
+    <pattern id="p" width="16" height="16" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="16" height="16" fill="#fff"/>
+      <rect width="5.33" height="16" fill="#d63b2f"/>
+      <rect x="10.66" width="5.33" height="16" fill="#3a62c8"/>
+    </pattern>
+  </defs>
+  <rect x="4" y="4" width="56" height="56" rx="14" fill="#0f1b33"/>
+  <g clip-path="url(#c)"><rect x="40" y="4" width="20" height="56" fill="url(#p)"/></g>
+  <text x="21" y="43" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="26" fill="#fff">UC</text>
+</svg>

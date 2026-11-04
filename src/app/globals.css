@@ -1,0 +1,179 @@
+@import "tailwindcss";
+
+/*
+  Design tokens.
+  Charcoal ink, one brass accent and a warm paper white. The striped "pole" motif is used in exactly two
+  places: the hero edge and the active booking step. Everything else stays quiet.
+  "pole" = the brass accent for buttons and highlights, "pole-dark" = the darker brass for text on light backgrounds.
+*/
+@theme {
+  --font-display: "Bricolage Grotesque Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Figtree Variable", ui-sans-serif, system-ui, sans-serif;
+
+  --color-ink: #15181d;
+  --color-ink-2: #1f242b;
+  --color-ink-3: #343b45;
+  --color-pole: #d4a24c;
+  --color-pole-dark: #8c610f;
+  --color-pole-blue: #2a3039;
+  --color-paper: #f6f3ee;
+  --color-mist: #ebe6dc;
+  --color-line: #d8d0c1;
+  --color-slate: #5c5a55;
+  --color-ok: #1f7a4d;
+  --color-bad: #b3261e;
+
+  --radius-chip: 999px;
+  --radius-control: 0.75rem;
+  --radius-panel: 1rem;
+}
+
+:root {
+  color-scheme: light;
+  --pole-stripes: repeating-linear-gradient(
+    -45deg,
+    var(--color-pole) 0 10px,
+    #ffffff 10px 20px,
+    var(--color-pole-blue) 20px 30px,
+    #ffffff 30px 40px
+  );
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.6;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  font-weight: 750;
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-pole-dark);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+/* On dark surfaces the focus ring switches to the light brass so it stays visible. */
+header :focus-visible,
+footer :focus-visible,
+.on-dark :focus-visible {
+  outline-color: var(--color-pole);
+}
+
+/* ---- Pole stripes ---- */
+.pole-band {
+  background-image: var(--pole-stripes);
+  background-size: 56.57px 56.57px;
+}
+
+.pole-bar {
+  background-image: var(--pole-stripes);
+  background-size: 56.57px 56.57px;
+  animation: pole-slide 1.6s linear infinite;
+}
+
+@keyframes pole-slide {
+  to {
+    background-position: 56.57px 0;
+  }
+}
+
+/* ---- Price board: name ..... price ---- */
+.price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+}
+.price-row .leader {
+  flex: 1;
+  min-width: 1rem;
+  border-bottom: 2px dotted var(--color-line);
+  transform: translateY(-0.3em);
+}
+
+/* ---- One orchestrated moment: hero chips arrive in sequence ---- */
+@keyframes chip-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.chip-in {
+  opacity: 0;
+  animation: chip-in 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+}
+
+/* ---- Confirmation tick draws itself ---- */
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.tick-draw {
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: draw 0.6s 0.15s ease-out forwards;
+}
+
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+.skeleton {
+  background: linear-gradient(90deg, var(--color-mist) 25%, #f6f8fb 50%, var(--color-mist) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+
+/* Hide scrollbars on the horizontal date strip but keep it scrollable */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+details > summary {
+  list-style: none;
+}
+details > summary::-webkit-details-marker {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .pole-bar,
+  .chip-in,
+  .tick-draw,
+  .skeleton {
+    animation: none;
+    opacity: 1;
+    stroke-dashoffset: 0;
+  }
+}

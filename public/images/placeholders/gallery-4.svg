@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1200" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#262a31"/><stop offset="1" stop-color="#101215"/></linearGradient>
+    <pattern id="s" width="80" height="80" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="80" height="80" fill="none"/><rect width="14" height="80" fill="#fff" opacity="0.035"/></pattern>
+    <filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.05 0"/></filter>
+  </defs>
+  <rect width="1600" height="1200" fill="url(#g)"/>
+  <rect width="1600" height="1200" fill="url(#s)"/>
+  <circle cx="800" cy="600" r="430" fill="#fff" opacity="0.04"/>
+  <g><rect x="680" y="250" width="240" height="700" rx="120" fill="#fff"/><clipPath id="pc"><rect x="680" y="250" width="240" height="700" rx="120"/></clipPath><g clip-path="url(#pc)" transform="rotate(-35 800 600)"><rect x="500" y="240" width="700" height="60" fill="#c8932f"/><rect x="500" y="360" width="700" height="60" fill="#2b3038"/><rect x="500" y="480" width="700" height="60" fill="#c8932f"/><rect x="500" y="600" width="700" height="60" fill="#2b3038"/><rect x="500" y="720" width="700" height="60" fill="#c8932f"/><rect x="500" y="840" width="700" height="60" fill="#2b3038"/></g><rect x="640" y="210" width="320" height="60" rx="18" fill="#ede6d8"/><rect x="640" y="930" width="320" height="60" rx="18" fill="#ede6d8"/></g>
+  <rect width="1600" height="1200" filter="url(#n)" opacity="0.6"/>
+</svg>

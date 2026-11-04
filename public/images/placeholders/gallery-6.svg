@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1200" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2a2e35"/><stop offset="1" stop-color="#121418"/></linearGradient>
+    <pattern id="s" width="80" height="80" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="80" height="80" fill="none"/><rect width="14" height="80" fill="#fff" opacity="0.035"/></pattern>
+    <filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.05 0"/></filter>
+  </defs>
+  <rect width="1600" height="1200" fill="url(#g)"/>
+  <rect width="1600" height="1200" fill="url(#s)"/>
+  <circle cx="800" cy="600" r="430" fill="#fff" opacity="0.04"/>
+  <g fill="none" stroke="#ede6d8" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="800" cy="520" rx="230" ry="290"/><ellipse cx="800" cy="520" rx="170" ry="230" stroke-width="6"/><path d="M800 810 L800 1010"/><path d="M720 1010 L880 1010"/></g>
+  <rect width="1600" height="1200" filter="url(#n)" opacity="0.6"/>
+</svg>
