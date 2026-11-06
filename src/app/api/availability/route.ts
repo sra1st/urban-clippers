@@ -3,6 +3,7 @@ import { getUser } from "@/lib/auth";
 import { findNext, getAvailability } from "@/lib/availability";
 import { MAX_DAYS_AHEAD } from "@/lib/config";
 import { BookingError } from "@/lib/errors";
+import { readOpts } from "@/lib/availability-params";
 import { addDays, formatTime12, isValidDate, nowDhaka } from "@/lib/time";
 
 export const dynamic = "force-dynamic";
@@ -19,7 +20,8 @@ export const GET = route(async (req) => {
 
   // ?admin=1 only takes effect for a signed-in admin: walk-ins may use the current hour.
   const admin = params.get("admin") === "1" && (await getUser().catch(() => null))?.role === "admin";
-  const days = await getAvailability(today, last, { admin });
+  const { hours, barberId, excludeCode } = readOpts(params);
+  const days = await getAvailability(today, last, { admin, hours, barberId, excludeCode });
   const day = days[date];
   const anyFree = day.slots.some((s) => s.available);
   const next = anyFree ? null : findNext(days, date);

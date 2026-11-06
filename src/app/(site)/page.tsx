@@ -17,14 +17,14 @@ const POPULAR = ["Classic haircut", "Skin fade", "Haircut and beard", "Hot towel
 const TRUST = [
   { t: "Open every day", d: "10 AM to 11 PM, 7 days a week" },
   { t: "Four barbers", d: "Always a free chair, no long waits" },
-  { t: "Pay after your cut", d: "Cash, bKash or Nagad at the studio" },
+  { t: "Pay after your cut", d: "Cash, card, bKash or Nagad at the studio" },
   { t: "Free changes", d: "Reschedule or cancel up to 2 hours before" },
 ];
 
 const STEPS = [
   { n: "1", t: "Choose your services", d: "A cut, a beard trim, a facial or a full groom package. Prices are shown up front." },
   { n: "2", t: "Pick a free time", d: "You only see times that are genuinely free. Grey means taken, and it updates live." },
-  { n: "3", t: "Get your barber's name", d: "We assign the barber who is free, and your confirmation shows who is waiting for you." },
+  { n: "3", t: "Choose your barber", d: "Pick your own barber, or have one assigned. Your confirmation shows who is waiting for you." },
 ];
 
 const GALLERY = [

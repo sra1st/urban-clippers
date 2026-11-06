@@ -49,6 +49,7 @@ npm run test:booking
 | `CRON_SECRET` | a different long random string |
 | `NEXT_PUBLIC_SITE_URL` | your Netlify URL, for example `https://urban-clippers.netlify.app` |
 | `NEXT_PUBLIC_DEMO_NOTICE` | `true` (small "portfolio demo" note) or `false` |
+| `OTP_DEMO_MODE` | `true` for the portfolio demo: sign-in codes are shown on screen, no SMS is sent. For a real shop remove it and set `SMS_WEBHOOK_URL` (and `SMS_WEBHOOK_TOKEN`) to your SMS gateway. |
 
 Generate each secret with this command, run anywhere:
 
@@ -58,6 +59,16 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 
 3. Deploy. Then open `https://YOUR-SITE.netlify.app/api/health`. You should see `{"ok":true}`.
 4. Optional: rename the site under **Site configuration, Change site name** to get a clean URL. Update `NEXT_PUBLIC_SITE_URL` to match and redeploy.
+
+## Updating a site that is already live (barber choice, multi-hour bookings, phone sign-in)
+
+Do these in order, from the project folder, with `.env.local` holding your TiDB details:
+
+```bash
+npm run db:migrate
+```
+
+Then add `OTP_DEMO_MODE` = `true` in Netlify, push the code, and run the "Reset demo data" workflow once (this clears the old sample bookings). The migration keeps all existing data and is safe to run twice. Always migrate before the new code goes live.
 
 ## 5. Nightly demo reset (GitHub Actions)
 

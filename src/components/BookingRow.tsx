@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { BookingView } from "@/lib/bookings";
-import { formatBDT, formatDay, formatTime12 } from "@/lib/time";
+import { addHoursTo, formatBDT, formatDay, formatTime12 } from "@/lib/time";
 import { StatusBadge } from "./StatusBadge";
 
 /** One booking as a tappable card (My bookings page). */
@@ -11,6 +11,7 @@ export function BookingRow({ b }: { b: BookingView }) {
         <div>
           <p className="font-display text-2xl font-bold leading-tight">
             {formatDay(b.date)}, {formatTime12(b.time)}
+            {b.hours > 1 && <span className="text-lg text-slate"> to {formatTime12(addHoursTo(b.time, b.hours))}</span>}
           </p>
           <p className="mt-1 text-slate">{b.services.map((s) => s.name).join(", ")}</p>
         </div>

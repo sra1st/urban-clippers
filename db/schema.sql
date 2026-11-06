@@ -31,14 +31,17 @@ CREATE TABLE IF NOT EXISTS shop_hours (
 CREATE TABLE IF NOT EXISTS users (
   id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(80) NOT NULL,
-  email VARCHAR(160) NOT NULL,
-  phone VARCHAR(20) NOT NULL DEFAULT '',
-  password_hash VARCHAR(100) NOT NULL,
+  email VARCHAR(160) NULL,
+  phone VARCHAR(20) NULL,
+  password_hash VARCHAR(100) NULL,
   role ENUM('client','admin') NOT NULL DEFAULT 'client',
   is_demo TINYINT(1) NOT NULL DEFAULT 0,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  UNIQUE KEY uq_users_email (email)
+  UNIQUE KEY uq_users_email (email),
+  UNIQUE KEY uq_users_phone (phone)
 );
+-- Clients sign in with their phone number and a one-time code: no email, no password.
+-- Staff (admin) accounts still use email + password, so those two columns stay in the table but are optional.
 
 -- A barber who is unchecked for a date has a row here. No row means working.
 CREATE TABLE IF NOT EXISTS barber_days_off (
@@ -59,6 +62,8 @@ CREATE TABLE IF NOT EXISTS bookings (
   slot_time TIME NOT NULL,
   status ENUM('booked','completed','cancelled','no_show') NOT NULL DEFAULT 'booked',
   source ENUM('online','walkin') NOT NULL DEFAULT 'online',
+  hours TINYINT NOT NULL DEFAULT 1,
+  barber_requested TINYINT(1) NOT NULL DEFAULT 0,
   total_bdt INT NOT NULL,
   note VARCHAR(200) NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -81,7 +86,7 @@ CREATE TABLE IF NOT EXISTS booking_services (
 );
 
 -- THE DOUBLE-BOOKING GUARD.
--- A live booking owns exactly one row here: (barber, date, start time).
+-- A live booking owns one row here per hour it needs: (barber, date, hour). A 2-hour booking owns two rows.
 -- The UNIQUE key makes it impossible for two bookings to hold the same barber at the same time,
 -- no matter how many requests arrive at once. Cancelling a booking deletes its row, which frees the slot.
 CREATE TABLE IF NOT EXISTS booking_slots (
@@ -91,7 +96,7 @@ CREATE TABLE IF NOT EXISTS booking_slots (
   slot_time TIME NOT NULL,
   booking_id INT NOT NULL,
   UNIQUE KEY uq_barber_slot (barber_id, slot_date, slot_time),
-  UNIQUE KEY uq_slot_booking (booking_id),
+  INDEX idx_slot_booking (booking_id),
   CONSTRAINT fk_slot_barber FOREIGN KEY (barber_id) REFERENCES barbers(id),
   CONSTRAINT fk_slot_booking FOREIGN KEY (booking_id) REFERENCES bookings(id) ON DELETE CASCADE
 );
@@ -102,4 +107,13 @@ CREATE TABLE IF NOT EXISTS rate_limits (
   window_start BIGINT NOT NULL,
   hits INT NOT NULL DEFAULT 1,
   PRIMARY KEY (key_name, window_start)
+);
+
+-- One-time sign-in codes. Only a keyed hash of the code is stored, never the code itself.
+CREATE TABLE IF NOT EXISTS otp_codes (
+  phone VARCHAR(20) NOT NULL PRIMARY KEY,
+  code_hash CHAR(64) NOT NULL,
+  expires_at BIGINT NOT NULL,
+  sent_at BIGINT NOT NULL,
+  attempts INT NOT NULL DEFAULT 0
 );

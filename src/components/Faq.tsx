@@ -3,15 +3,15 @@ import { CANCEL_CUTOFF_MINUTES } from "@/lib/config";
 const ITEMS = [
   {
     q: "Do I need an account to book?",
-    a: "No. You can book as a guest with your name and mobile number. An account just keeps all your bookings in one place.",
+    a: "No. You can book as a guest with your name and mobile number. If you'd like your bookings in one place, sign in with just your mobile number and a text-message code. No password or email needed.",
   },
   {
     q: "Can I choose my barber?",
-    a: "Not online. We give you whichever barber is free at your time, and you'll see their name as soon as you've booked.",
+    a: "Yes. When you book, pick your barber and you'll see only the times he is free. Or choose \"Any available barber\" and we'll assign whoever is free at your time. Either way, your confirmation shows his name.",
   },
   {
     q: "How long does a visit take?",
-    a: "Each booking holds about an hour with one barber. Extras like a facial or head massage fit inside the same visit.",
+    a: "A booking is generally one hour. A haircut with a beard trim averages an hour, and each extra add-on such as a facial or a hair treatment adds another hour. The total time is confirmed while you book, and your barber is held for all of it, so nobody else can book him in that time.",
   },
   {
     q: "Can I cancel or reschedule?",
@@ -19,7 +19,7 @@ const ITEMS = [
   },
   {
     q: "How do I pay?",
-    a: "At the studio after your service. We take cash, bKash and Nagad.",
+    a: "At the studio after your service. We take cash, card, bKash and Nagad.",
   },
   {
     q: "What if I'm running late?",

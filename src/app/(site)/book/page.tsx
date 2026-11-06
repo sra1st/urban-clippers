@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { BookingFlow } from "@/components/BookingFlow";
 import { getUser } from "@/lib/auth";
+import { listBarbers, listUserBookings } from "@/lib/bookings";
 import { getServicesSafe, groupByCategory } from "@/lib/data";
 import { SITE } from "@/lib/site";
 
@@ -14,6 +15,8 @@ export default async function BookPage({ searchParams }: { searchParams: Promise
   const sp = await searchParams;
   const services = await getServicesSafe();
   const user = await getUser().catch(() => null);
+  const barbers = await listBarbers().catch(() => []);
+  const lastBarberId = user && !user.isDemo ? ((await listUserBookings(user.id).catch(() => []))[0]?.barberId ?? null) : null;
 
   const valid = new Set(services.map((s) => s.id));
   const serviceIds = (one(sp.service) ?? "")
@@ -34,6 +37,8 @@ export default async function BookPage({ searchParams }: { searchParams: Promise
       <h1 className="mb-6 text-4xl sm:text-5xl">Book your slot</h1>
       <BookingFlow
         groups={groups}
+        barbers={barbers}
+        lastBarberId={lastBarberId}
         user={user ? { name: user.isDemo ? "" : user.name, phone: user.isDemo ? "" : user.phone } : null}
         preset={{ serviceIds, date, time: date ? time : null }}
         demoNotice={SITE.demoNotice}

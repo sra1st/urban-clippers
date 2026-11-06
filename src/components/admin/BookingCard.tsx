@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { BookingView } from "@/lib/bookings";
 import { prettyPhone } from "@/lib/phone";
-import { formatBDT, formatDay, formatTime12 } from "@/lib/time";
+import { addHoursTo, formatBDT, formatDay, formatTime12 } from "@/lib/time";
 import { StatusBadge } from "../StatusBadge";
 
 const small = "inline-flex min-h-10 items-center justify-center rounded-control px-3.5 text-sm font-semibold transition-colors disabled:opacity-50";
@@ -48,9 +48,11 @@ export function BookingCard({
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="font-display text-2xl font-bold leading-none tabular-nums">{formatTime12(b.time)}</p>
+          {b.hours > 1 && <p className="mt-1 text-sm font-semibold text-slate">until {formatTime12(addHoursTo(b.time, b.hours))} ({b.hours} hr)</p>}
           {showDate && <p className="mt-1 text-sm font-semibold text-slate">{formatDay(b.date)}</p>}
         </div>
         <div className="flex flex-wrap items-center justify-end gap-1.5">
+          {b.barberRequested && <span className="rounded-chip bg-[#fbeed2] px-2.5 py-1 text-xs font-bold text-[#7a4f00]">Barber requested</span>}
           {b.source === "walkin" && <span className="rounded-chip bg-mist px-2.5 py-1 text-xs font-bold text-ink-3">Walk-in</span>}
           <StatusBadge status={b.status} />
         </div>

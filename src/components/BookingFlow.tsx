@@ -4,8 +4,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useRef, useState } from "react";
 import { MAX_SERVICES_PER_BOOKING } from "@/lib/config";
+import { hoursLabel, visitHours } from "@/lib/duration";
 import { normalizePhone } from "@/lib/phone";
-import { formatBDT, formatDayLong, formatTime12 } from "@/lib/time";
+import { addHoursTo, formatBDT, formatDayLong, formatTime12 } from "@/lib/time";
 import { SlotPicker } from "./SlotPicker";
 import { btn, field, label } from "./ui";
 
@@ -15,21 +16,26 @@ const STEPS = ["Services", "Time", "Details", "Review"];
 
 export function BookingFlow({
   groups,
+  barbers,
+  lastBarberId,
   user,
   preset,
   demoNotice,
 }: {
   groups: FlowGroup[];
+  barbers: { id: number; name: string }[];
+  lastBarberId: number | null;
   user: { name: string; phone: string } | null;
   preset: { serviceIds: number[]; date: string | null; time: string | null };
   demoNotice: boolean;
 }) {
   const router = useRouter();
-  const all = useMemo(() => groups.flatMap((g) => g.items), [groups]);
+  const all = useMemo(() => groups.flatMap((g) => g.items.map((i) => ({ ...i, category: g.category }))), [groups]);
   const [step, setStep] = useState(preset.serviceIds.length > 0 ? 2 : 1);
   const [ids, setIds] = useState<number[]>(preset.serviceIds);
   const [date, setDate] = useState<string | null>(preset.date);
   const [time, setTime] = useState<string | null>(preset.time);
+  const [barberId, setBarberId] = useState<number | null>(null); // null = we assign whoever is free
   const [name, setName] = useState(user?.name ?? "");
   const [phone, setPhone] = useState(user?.phone ?? "");
   const [tried, setTried] = useState(false);
@@ -41,6 +47,8 @@ export function BookingFlow({
 
   const chosen = all.filter((s) => ids.includes(s.id));
   const total = chosen.reduce((n, s) => n + s.price, 0);
+  const hours = visitHours(chosen);
+  const barber = barbers.find((b) => b.id === barberId) ?? null;
   const normalized = normalizePhone(phone);
   const nameOk = name.trim().length >= 2;
 
@@ -64,6 +72,14 @@ export function BookingFlow({
 
   function toggle(id: number) {
     setIds((cur) => (cur.includes(id) ? cur.filter((x) => x !== id) : cur.length >= MAX_SERVICES_PER_BOOKING ? cur : [...cur, id]));
+    setTime(null); // the visit length may have changed, so the chosen start time must be checked again
+  }
+
+  function pickBarber(id: number | null) {
+    setBarberId(id);
+    setTime(null);
+    setLostTime(null);
+    setError(null);
   }
 
   async function submit() {
@@ -74,7 +90,7 @@ export function BookingFlow({
       const res = await fetch("/api/bookings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ date, time, serviceIds: ids, name: name.trim(), phone: normalized }),
+        body: JSON.stringify({ date, time, serviceIds: ids, barberId, name: name.trim(), phone: normalized }),
       });
       const data = (await res.json().catch(() => ({}))) as { booking?: { code: string }; error?: string; code?: string };
       if (res.status === 201 && data.booking) {
@@ -87,7 +103,11 @@ export function BookingFlow({
         setTime(null);
         setRefreshKey((k) => k + 1);
         setStep(2);
-        setError("That time was just taken by someone else. Nothing is lost: pick one of the highlighted times, or any other free time.");
+        setError(
+          barber
+            ? `${barber.name} was just booked at that time. Nothing is lost: pick another time, or choose "Any available barber".`
+            : "That time was just taken by someone else. Nothing is lost: pick one of the highlighted times, or any other free time.",
+        );
         top.current?.scrollIntoView({ behavior: "smooth", block: "start" });
       } else {
         setError(data.error ?? "Something went wrong. Please try again.");
@@ -119,13 +139,26 @@ export function BookingFlow({
       </div>
       <div>
         <dt className="text-xs font-bold uppercase tracking-wide text-slate">When</dt>
-        <dd className="mt-1">{date && time ? `${formatDayLong(date)}, ${formatTime12(time)}` : <span className="text-slate">Not chosen yet</span>}</dd>
+        <dd className="mt-1">
+          {date && time ? (
+            <>
+              {formatDayLong(date)}, {formatTime12(time)} to {formatTime12(addHoursTo(time, hours))}
+            </>
+          ) : (
+            <span className="text-slate">Not chosen yet</span>
+          )}
+        </dd>
+        {chosen.length > 0 && <dd className="mt-0.5 text-slate">Visit length: {hoursLabel(hours)}</dd>}
+      </div>
+      <div>
+        <dt className="text-xs font-bold uppercase tracking-wide text-slate">Barber</dt>
+        <dd className="mt-1">{barber ? `${barber.name} (your choice)` : "Any available barber"}</dd>
       </div>
       <div className="flex items-baseline justify-between border-t-2 border-ink pt-3">
         <dt className="font-bold">Total</dt>
         <dd className="font-display text-2xl font-extrabold tabular-nums">{formatBDT(total)}</dd>
       </div>
-      <p className="text-sm text-slate">Pay at the studio after your visit. Cash, bKash or Nagad.</p>
+      <p className="text-sm text-slate">Pay at the studio after your visit. Cash, card, bKash or Nagad.</p>
     </dl>
   );
 
@@ -169,7 +202,12 @@ export function BookingFlow({
               <h2 id="s1" className="text-3xl">
                 What are we doing today?
               </h2>
-              <p className="mt-2 text-slate">Pick one or more. Extras like a facial fit inside the same visit. Up to {MAX_SERVICES_PER_BOOKING}.</p>
+              <p className="mt-2 text-slate">
+                Pick one or more, up to {MAX_SERVICES_PER_BOOKING}. A haircut and beard visit is about an hour. Each facial or hair treatment you add is one more hour with your barber.
+              </p>
+              {chosen.length > 0 && (
+                <p className="mt-3 inline-flex rounded-chip bg-mist px-3 py-1 text-sm font-bold text-ink">Visit length: {hoursLabel(hours)}</p>
+              )}
               <div className="mt-6 space-y-8">
                 {groups.map((g) => (
                   <fieldset key={g.category}>
@@ -222,9 +260,33 @@ export function BookingFlow({
               <h2 id="s2" className="text-3xl">
                 Pick a day and time
               </h2>
-              <p className="mt-2 text-slate">Greyed-out times are taken. We assign whichever barber is free, and you&apos;ll see their name once you&apos;ve booked.</p>
+              <p className="mt-2 text-slate">
+                Choose your barber to see when they&apos;re free, or let us assign whoever is free. Greyed-out times are taken. Your visit takes {hoursLabel(hours)}.
+              </p>
+              <div role="radiogroup" aria-label="Barber" className="mt-5 flex flex-wrap gap-2">
+                {[{ id: null as number | null, name: "Any available barber" }, ...barbers].map((b) => {
+                  const on = b.id === barberId;
+                  return (
+                    <button
+                      key={b.id ?? "any"}
+                      type="button"
+                      role="radio"
+                      aria-checked={on}
+                      onClick={() => pickBarber(b.id)}
+                      className={`inline-flex min-h-11 items-center gap-2 rounded-control border-2 px-4 font-semibold transition-colors ${on ? "border-ink bg-ink text-white" : "border-line bg-white hover:border-ink-3"}`}
+                    >
+                      {b.name}
+                      {b.id !== null && b.id === lastBarberId && (
+                        <span className={`rounded-chip px-2 py-0.5 text-xs font-bold ${on ? "bg-white/20" : "bg-mist text-slate"}`}>Your usual</span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
               <div className="mt-6">
                 <SlotPicker
+                  hours={hours}
+                  barberId={barberId}
                   date={date}
                   time={time}
                   refreshKey={refreshKey}
@@ -294,7 +356,7 @@ export function BookingFlow({
                     <Link href="/login?next=/book" className="font-semibold text-pole-dark underline underline-offset-4">
                       Sign in
                     </Link>{" "}
-                    to keep all your bookings in one place.
+                    with your phone number to keep all your bookings in one place. No password, just a code.
                   </p>
                 )}
               </div>

@@ -8,7 +8,7 @@ async function main() {
   const { resetDemo } = await import("../src/lib/demo-reset");
   const { pool } = await import("../src/lib/db");
   const res = await resetDemo();
-  console.log(`Demo data reset: ${res.bookings} bookings across ${res.days} days.`);
+  console.log(`Demo data reset: ${res.services} services restored, all bookings cleared.`);
   await pool.end();
 }
 

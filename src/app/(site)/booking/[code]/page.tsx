@@ -6,9 +6,10 @@ import { UnlockBooking } from "@/components/UnlockBooking";
 import { canManageBooking } from "@/lib/auth";
 import { getBookingByCode } from "@/lib/bookings";
 import { CANCEL_CUTOFF_MINUTES, SLOT_MINUTES } from "@/lib/config";
+import { hoursLabel } from "@/lib/duration";
 import { prettyPhone } from "@/lib/phone";
 import { mapsUrl, SITE } from "@/lib/site";
-import { dhakaEpoch, formatBDT, formatDayLong, formatTime12 } from "@/lib/time";
+import { addHoursTo, dhakaEpoch, formatBDT, formatDayLong, formatTime12 } from "@/lib/time";
 import { btn } from "@/components/ui";
 
 export const dynamic = "force-dynamic";
@@ -33,7 +34,7 @@ export default async function BookingPage({ params, searchParams }: { params: Pr
   }
 
   const start = dhakaEpoch(booking.date, booking.time);
-  const end = start + SLOT_MINUTES * 60_000;
+  const end = start + booking.hours * SLOT_MINUTES * 60_000;
   const where = `${SITE.name}, ${SITE.addressLines.join(", ")}`;
   const names = booking.services.map((s) => s.name).join(", ");
   const when = `${formatDayLong(booking.date)}, ${formatTime12(booking.time)}`;
@@ -76,7 +77,10 @@ export default async function BookingPage({ params, searchParams }: { params: Pr
           <div>
             <p className="text-sm font-bold uppercase tracking-wide text-slate">When</p>
             <p className="font-display text-3xl font-bold leading-tight">{formatDayLong(booking.date)}</p>
-            <p className="font-display text-3xl font-bold leading-tight text-pole-dark">{formatTime12(booking.time)}</p>
+            <p className="font-display text-3xl font-bold leading-tight text-pole-dark">
+              {formatTime12(booking.time)} <span className="text-xl text-slate">to {formatTime12(addHoursTo(booking.time, booking.hours))}</span>
+            </p>
+            <p className="mt-1 text-sm text-slate">Visit length: {hoursLabel(booking.hours)}. Your barber is held for all of it.</p>
           </div>
 
           <div className="flex items-center gap-4 rounded-control bg-paper p-4">
@@ -86,6 +90,7 @@ export default async function BookingPage({ params, searchParams }: { params: Pr
             <div>
               <p className="text-sm font-bold uppercase tracking-wide text-slate">Your barber</p>
               <p className="text-xl font-bold">{booking.barberName}</p>
+              <p className="text-sm text-slate">{booking.barberRequested ? "Your choice" : "Assigned to you"}</p>
             </div>
           </div>
 
@@ -103,7 +108,7 @@ export default async function BookingPage({ params, searchParams }: { params: Pr
               <span className="font-bold">Total</span>
               <span className="font-display text-2xl font-extrabold tabular-nums">{formatBDT(booking.total)}</span>
             </p>
-            <p className="mt-1 text-sm text-slate">Pay at the studio: cash, bKash or Nagad.</p>
+            <p className="mt-1 text-sm text-slate">Pay at the studio: cash, card, bKash or Nagad.</p>
           </div>
 
           <p className="text-sm text-slate">
@@ -120,6 +125,9 @@ export default async function BookingPage({ params, searchParams }: { params: Pr
           canChange={booking.canChange}
           cutoffHours={CANCEL_CUTOFF_MINUTES / 60}
           links={links}
+          hours={booking.hours}
+          barberId={booking.barberRequested ? booking.barberId : null}
+          barberName={booking.barberName}
         />
       </div>
 

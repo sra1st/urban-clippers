@@ -97,3 +97,6 @@ export function dayLabel(date: string, today: string): string {
 export function formatBDT(n: number): string {
   return `৳${n.toLocaleString("en-US")}`;
 }
+
+/** "12:00" + 2 hours -> "14:00". */
+export const addHoursTo = (time: string, hours: number): string => fromMinutes(toMinutes(time) + hours * 60);

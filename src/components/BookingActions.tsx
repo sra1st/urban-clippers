@@ -20,12 +20,19 @@ export function BookingActions({
   canChange,
   cutoffHours,
   links,
+  hours,
+  barberId,
+  barberName,
 }: {
   code: string;
   status: string;
   canChange: boolean;
   cutoffHours: number;
   links: Links;
+  hours: number;
+  /** Set only when the customer chose this barber: rescheduling then stays with them. */
+  barberId: number | null;
+  barberName: string;
 }) {
   const router = useRouter();
   const [mode, setMode] = useState<"idle" | "reschedule" | "cancel">("idle");
@@ -139,9 +146,9 @@ export function BookingActions({
       {mode === "reschedule" && (
         <div role="group" aria-label="Reschedule booking" className="rounded-panel border-2 border-ink bg-white p-5">
           <h2 className="text-2xl">Pick a new time</h2>
-          <p className="mb-5 mt-1 text-slate">We&apos;ll keep your services and try to keep the same barber.</p>
+          <p className="mb-5 mt-1 text-slate">{barberId ? `Showing ${barberName}'s free times, since you chose ${barberName}.` : "We'll keep your services and try to keep the same barber."} Your visit takes {hours === 1 ? "1 hour" : `${hours} hours`}.</p>
           {error && <p role="alert" className="mb-4 rounded-control border-2 border-bad p-3 font-semibold text-bad">{error}</p>}
-          <SlotPicker date={date} time={time} refreshKey={refreshKey} nearTime={lost} onSelect={(d, t) => { setDate(d); setTime(t); setError(null); }} />
+          <SlotPicker hours={hours} barberId={barberId} excludeCode={code} date={date} time={time} refreshKey={refreshKey} nearTime={lost} onSelect={(d, t) => { setDate(d); setTime(t); setError(null); }} />
           <div className="mt-2 flex flex-wrap items-center gap-2.5">
             <button
               type="button"

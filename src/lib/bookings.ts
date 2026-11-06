@@ -18,6 +18,10 @@ export type BookingView = {
   total: number;
   source: "online" | "walkin";
   userId: number | null;
+  /** Length of the visit in hours; the barber is held for all of it. */
+  hours: number;
+  /** True when the customer picked this barber, false when the studio assigned one. */
+  barberRequested: boolean;
   note: string | null;
   services: { id: number; name: string; price: number }[];
   /** True while the person can still cancel or reschedule. */
@@ -26,7 +30,7 @@ export type BookingView = {
 
 const SELECT = `
   SELECT b.id, b.code, b.status, b.slot_date, b.slot_time, b.customer_name, b.phone, b.barber_id,
-         br.name AS barber_name, b.total_bdt, b.source, b.user_id, b.note
+         br.name AS barber_name, b.total_bdt, b.source, b.user_id, b.hours, b.barber_requested, b.note
     FROM bookings b
     JOIN barbers br ON br.id = b.barber_id`;
 
@@ -57,6 +61,8 @@ async function hydrate(db: Db, rows: RowDataPacket[]): Promise<BookingView[]> {
       total: Number(r.total_bdt),
       source: r.source as "online" | "walkin",
       userId: r.user_id === null ? null : Number(r.user_id),
+      hours: Number(r.hours ?? 1),
+      barberRequested: Boolean(r.barber_requested),
       note: r.note === null ? null : String(r.note),
       services: svc
         .filter((s) => Number(s.booking_id) === Number(r.id))

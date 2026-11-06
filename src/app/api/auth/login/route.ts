@@ -18,8 +18,8 @@ export const POST = route(async (req) => {
 
   const rows = await q<RowDataPacket>(pool, "SELECT id, role, password_hash FROM users WHERE email = ?", [body.email]);
   const user = rows[0];
-  const ok = await verifyPassword(body.password, user ? String(user.password_hash) : DUMMY_HASH);
-  if (!user || !ok) throw new BookingError("AUTH", "Email or password is incorrect.");
+  const ok = await verifyPassword(body.password, user?.password_hash ? String(user.password_hash) : DUMMY_HASH);
+  if (!user || !user.password_hash || !ok) throw new BookingError("AUTH", "Email or password is incorrect.");
 
   await startSession({ id: Number(user.id), role: String(user.role) });
   return json({ ok: true, role: user.role });

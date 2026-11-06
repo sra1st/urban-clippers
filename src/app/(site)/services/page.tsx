@@ -16,7 +16,7 @@ export default async function ServicesPage() {
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
       <h1 className="text-4xl sm:text-6xl">Services and prices</h1>
       <p className="mb-10 mt-3 max-w-2xl text-lg text-slate">
-        Every booking holds about an hour with one barber. Extras such as a facial or head massage fit inside the same visit. Prices are in taka and paid at the studio.
+        A booking is generally one hour with one barber. Each facial or hair treatment you add takes another hour, and your barber is held for all of it. Prices are in taka and paid at the studio.
       </p>
       <PriceBoard services={services} withBookLinks />
       <div className="mt-14 flex flex-wrap items-center gap-4 rounded-panel bg-ink p-6 text-white sm:p-8">

@@ -47,6 +47,8 @@ async function main() {
 
   // 3. Date and time
   await page.getByRole("heading", { level: 2 }).filter({ hasText: /time|when/i }).first().waitFor();
+  await pause(1500);
+  await page.getByRole("radio", { name: /Anis/ }).click(); // pick a favourite barber; "Any available barber" is the default
   await pause(1800);
   const chips = page.getByRole("button", { name: /^\d{1,2}:00 (AM|PM)$/ });
   await chips.first().waitFor();

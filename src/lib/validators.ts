@@ -33,6 +33,8 @@ export const createBookingSchema = z.object({
   name: nameField,
   phone: phoneField,
   note: z.string().trim().max(200, "Note is too long.").optional(),
+  /** Omit or null for "any available barber". */
+  barberId: z.number().int().positive().nullish(),
 });
 
 export const lookupSchema = z.object({
@@ -47,11 +49,11 @@ export const rescheduleSchema = z.object({
   phone: z.string().optional(),
 });
 
-export const registerSchema = z.object({
-  name: nameField,
-  email: z.string().trim().toLowerCase().max(160).pipe(z.email("Enter a valid email address.")),
-  phone: z.union([phoneField, z.literal("")]).optional(),
-  password: z.string().min(8, "Use at least 8 characters.").max(72, "Password is too long."),
+export const otpRequestSchema = z.object({ phone: phoneField });
+
+export const otpVerifySchema = z.object({
+  phone: phoneField,
+  code: z.string().trim().regex(/^\d{6}$/, "Enter the 6-digit code."),
 });
 
 export const loginSchema = z.object({

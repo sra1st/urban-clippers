@@ -6,6 +6,7 @@ import { SignOutButton } from "@/components/SignOutButton";
 import { btn } from "@/components/ui";
 import { getUser } from "@/lib/auth";
 import { listUserBookings } from "@/lib/bookings";
+import { prettyPhone } from "@/lib/phone";
 import { minutesUntil } from "@/lib/time";
 
 export const dynamic = "force-dynamic";
@@ -26,7 +27,7 @@ export default async function AccountPage() {
         <div>
           <h1 className="text-4xl sm:text-5xl">My bookings</h1>
           <p className="mt-2 text-slate">
-            {user.name}
+            {user.name || prettyPhone(user.phone)}
             {user.isDemo && <span className="ml-2 rounded-chip bg-ink px-2.5 py-0.5 text-xs font-bold uppercase tracking-wide text-white">Demo account</span>}
           </p>
         </div>

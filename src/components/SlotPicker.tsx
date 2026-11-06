@@ -32,6 +32,9 @@ export function SlotPicker({
   admin = false,
   refreshKey = 0,
   nearTime = null,
+  hours = 1,
+  barberId = null,
+  excludeCode = null,
 }: {
   date: string | null;
   time: string | null;
@@ -39,11 +42,18 @@ export function SlotPicker({
   admin?: boolean;
   refreshKey?: number;
   nearTime?: string | null;
+  /** Visit length in hours: only start times where every hour is free are offered. */
+  hours?: number;
+  /** Show only this barber's free times. null = any barber. */
+  barberId?: number | null;
+  /** Booking code being rescheduled: its own current hours count as free. */
+  excludeCode?: string | null;
 }) {
   const [days, setDays] = useState<{ today: string; list: DayInfo[] } | null>(null);
   const [loaded, setLoaded] = useState<{ key: string; data: DayData } | null>(null);
   const [retry, setRetry] = useState(0);
-  const dayKey =`${date}|${admin ? 1 : 0}|${refreshKey}|${retry}`;
+  const qs = `hours=${hours}${barberId ? `&barber=${barberId}` : ""}${excludeCode ? `&exclude=${encodeURIComponent(excludeCode)}` : ""}`;
+  const dayKey = `${date}|${admin ? 1 : 0}|${refreshKey}|${retry}|${qs}`;
   // Data only counts while it belongs to the current date/refresh; otherwise show the skeleton.
   const day = loaded && loaded.key === dayKey ? loaded.data : null;
   const [error, setError] = useState<string | null>(null);
@@ -53,7 +63,7 @@ export function SlotPicker({
   // 1. The list of bookable dates.
   useEffect(() => {
     let alive = true;
-    fetch("/api/availability/days", { cache: "no-store" })
+    fetch(`/api/availability/days?${qs}`, { cache: "no-store" })
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error("days"))))
       .then((d: { today: string; days: DayInfo[] }) => {
         if (!alive) return;
@@ -69,13 +79,13 @@ export function SlotPicker({
       alive = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refreshKey, retry]);
+  }, [refreshKey, retry, qs]);
 
   // 2. The start times for the chosen date.
   useEffect(() => {
     if (!date) return;
     const mine = ++seq.current;
-    fetch(`/api/availability?date=${date}${admin ? "&admin=1" : ""}`, { cache: "no-store" })
+    fetch(`/api/availability?date=${date}${admin ? "&admin=1" : ""}&${qs}`, { cache: "no-store" })
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error("day"))))
       .then((d: DayData) => {
         if (mine !== seq.current) return;
@@ -83,7 +93,7 @@ export function SlotPicker({
         setError(null);
       })
       .catch(() => mine === seq.current && setError("We couldn't load the free times. Check your connection and try again."));
-  }, [date, admin, refreshKey, retry, dayKey]);
+  }, [date, admin, refreshKey, retry, dayKey, qs]);
 
   useEffect(() => {
     selectedChip.current?.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });

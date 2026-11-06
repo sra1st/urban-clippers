@@ -22,9 +22,9 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
 
   return (
     <div className="mx-auto max-w-md px-4 py-10 sm:py-14">
-      <h1 className="text-4xl sm:text-5xl">Welcome back</h1>
-      <p className="mb-8 mt-3 text-slate">Sign in to see your bookings and book faster. You can also book without an account.</p>
-      <AuthPanel next={next} initialMode={one(sp.mode) === "register" ? "register" : "signin"} />
+      <h1 className="text-4xl sm:text-5xl">Sign in with your number</h1>
+      <p className="mb-8 mt-3 text-slate">Just your mobile number and a text-message code. You can also book without signing in.</p>
+      <AuthPanel next={next} />
     </div>
   );
 }

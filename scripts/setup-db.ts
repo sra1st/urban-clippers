@@ -31,13 +31,15 @@ async function main() {
     .filter(Boolean);
 
   for (const stmt of statements) await conn.query(stmt);
+  const { migrate } = await import("../src/lib/migrate");
+  await migrate(conn, console.log); // upgrades an older database in place; does nothing on a fresh one
   console.log(`Schema ready (${statements.length} statements).`);
   await conn.end();
 
   const { resetDemo } = await import("../src/lib/demo-reset");
   const { pool } = await import("../src/lib/db");
   const res = await resetDemo();
-  console.log(`Demo data loaded: ${res.bookings} bookings across ${res.days} days.`);
+  console.log(`Demo data loaded: 4 barbers, ${res.services} services, no sample bookings.`);
   await pool.end();
 }
 
