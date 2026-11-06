@@ -182,7 +182,7 @@ export function AuthPanel({ next }: { next: string }) {
       </section>
 
       <details className="rounded-panel border-2 border-line bg-white p-4">
-        <summary className="cursor-pointer font-semibold">Studio staff sign-in</summary>
+        <summary className="cursor-pointer font-semibold">Admin login</summary>
         <form
           className="mt-4 grid gap-4"
           noValidate
@@ -194,9 +194,9 @@ export function AuthPanel({ next }: { next: string }) {
         >
           <div>
             <label htmlFor="s-email" className={label}>
-              Email
+              Username
             </label>
-            <input id="s-email" className={field} type="email" autoComplete="email" value={staff.email} onChange={(e) => setStaff((s) => ({ ...s, email: e.target.value }))} />
+            <input type="text" autoCapitalize="none" autoCorrect="off" spellCheck={false} autoComplete="username" onChange={(e) => setStaff((s) => ({ ...s, email: e.target.value }))} />
           </div>
           <div>
             <label htmlFor="s-pass" className={label}>
