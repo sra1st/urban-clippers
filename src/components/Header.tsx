@@ -15,12 +15,12 @@ async function safeUser(): Promise<SessionUser | null> {
 
 export function Logo({ className = "" }: { className?: string }) {
   return (
-    <Link href="/" className={`inline-flex items-center gap-2.5 text-white ${className}`} aria-label={`${SITE.name} home`}>
+    <Link href="/" className={`inline-flex shrink-0 items-center gap-2 whitespace-nowrap text-white sm:gap-2.5 ${className}`} aria-label={`${SITE.name} home`}>
       <span className="relative grid size-9 place-items-center overflow-hidden rounded-[10px] bg-ink-2 ring-1 ring-white/15">
         <span className="pole-band absolute inset-y-0 right-0 w-2" aria-hidden="true" />
         <span className="pr-2 font-display text-[15px] font-extrabold leading-none tracking-tight">UC</span>
       </span>
-      <span className="font-display text-xl font-extrabold leading-none tracking-tight">{SITE.name}</span>
+      <span className="whitespace-nowrap font-display text-[1.05rem] font-extrabold leading-none tracking-tight min-[380px]:text-xl">{SITE.name}</span>
     </Link>
   );
 }
@@ -40,7 +40,7 @@ export async function Header() {
 
   return (
     <header className="sticky top-0 z-40 bg-ink text-white">
-      <div className="relative mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
+      <div className="relative mx-auto flex h-16 max-w-6xl items-center justify-between gap-2 px-4 sm:gap-4 sm:px-6">
         <Logo />
         <nav aria-label="Main" className="hidden items-center gap-1 md:flex">
           {NAV.map((l) => (
@@ -49,7 +49,7 @@ export async function Header() {
             </Link>
           ))}
         </nav>
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
           <Link href={accountHref} className="hidden rounded-control px-3.5 py-2 font-semibold text-white/85 hover:bg-white/10 hover:text-white md:block">
             {accountLabel}
           </Link>
@@ -58,7 +58,7 @@ export async function Header() {
               <SignOutButton className="rounded-control px-3.5 py-2 font-semibold text-white/60 hover:bg-white/10 hover:text-white" />
             </span>
           )}
-          <Link href="/book" className={`${btn.primary} !min-h-10 !px-4 !py-2 text-[15px]`}>
+          <Link href="/book" className={`${btn.primary} !min-h-10 whitespace-nowrap !px-3.5 !py-2 text-[15px] sm:!px-4`}>
             Book now
           </Link>
           <MobileMenu links={mobileLinks} />

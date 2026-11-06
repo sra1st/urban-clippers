@@ -196,7 +196,7 @@ export function AuthPanel({ next }: { next: string }) {
             <label htmlFor="s-email" className={label}>
               Username
             </label>
-            <input type="text" autoCapitalize="none" autoCorrect="off" spellCheck={false} autoComplete="username" onChange={(e) => setStaff((s) => ({ ...s, email: e.target.value }))} />
+            <input id="s-email" className={field} type="text" autoCapitalize="none" autoCorrect="off" spellCheck={false} autoComplete="username" value={staff.email} onChange={(e) => setStaff((s) => ({ ...s, email: e.target.value }))} />
           </div>
           <div>
             <label htmlFor="s-pass" className={label}>
