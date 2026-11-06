@@ -3,6 +3,7 @@ import { getUser, type SessionUser } from "@/lib/auth";
 import { SITE } from "@/lib/site";
 import { MobileMenu } from "./MobileMenu";
 import { SignOutButton } from "./SignOutButton";
+import { ThemeToggle } from "./ThemeToggle";
 import { btn } from "./ui";
 
 async function safeUser(): Promise<SessionUser | null> {
@@ -58,6 +59,7 @@ export async function Header() {
               <SignOutButton className="rounded-control px-3.5 py-2 font-semibold text-white/60 hover:bg-white/10 hover:text-white" />
             </span>
           )}
+          <ThemeToggle className="hidden size-10 place-items-center rounded-control text-white/85 hover:bg-white/10 hover:text-white sm:grid" />
           <Link href="/book" className={`${btn.primary} !min-h-10 whitespace-nowrap !px-3.5 !py-2 text-[15px] sm:!px-4`}>
             Book now
           </Link>

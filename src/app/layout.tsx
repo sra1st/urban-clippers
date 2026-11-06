@@ -26,7 +26,11 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        {/* Applies a saved dark-mode choice before the first paint, so there is no light flash. */}
+        <script dangerouslySetInnerHTML={{ __html: "try{if(localStorage.getItem('uc-theme')==='dark')document.documentElement.dataset.theme='dark'}catch(e){}" }} />
+      </head>
       <body className="flex min-h-dvh flex-col">{children}</body>
     </html>
   );

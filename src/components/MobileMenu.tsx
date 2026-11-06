@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { ThemeToggle } from "./ThemeToggle";
 
 export function MobileMenu({ links }: { links: { href: string; label: string }[] }) {
   const [open, setOpen] = useState(false);
@@ -38,6 +39,9 @@ export function MobileMenu({ links }: { links: { href: string; label: string }[]
                 </Link>
               </li>
             ))}
+            <li className="sm:hidden">
+              <ThemeToggle withLabel className="flex w-full items-center gap-3 rounded-control px-3 py-3.5 text-lg font-semibold text-white hover:bg-white/10" />
+            </li>
           </ul>
         </nav>
       )}

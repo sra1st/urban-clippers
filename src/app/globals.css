@@ -177,3 +177,43 @@ details > summary::-webkit-details-marker {
     stroke-dashoffset: 0;
   }
 }
+
+/* ---- Dark mode ----
+   Switched by the moon button (html[data-theme="dark"], remembered in localStorage).
+   One-purpose colours are remapped as tokens. "ink" is used both for text and for dark surfaces and
+   "white" both for cards and for text on dark surfaces, so those few utilities are overridden by class. */
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --color-paper: #0f1216;
+  --color-mist: #232932;
+  --color-line: #343b45;
+  --color-slate: #a9acb2;
+  --color-pole-dark: #e2b560;
+  --color-ok: #2e9e68;
+  --color-bad: #e0564e;
+}
+html[data-theme="dark"] .text-ink { color: #eee9df; }
+html[data-theme="dark"] .bg-pole.text-ink,
+html[data-theme="dark"] .bg-pole .text-ink { color: #15181d; }
+html[data-theme="dark"] .bg-white { background-color: #181c22; }
+html[data-theme="dark"] .bg-white\/95 { background-color: rgb(24 28 34 / 0.95); }
+html[data-theme="dark"] .border-ink,
+html[data-theme="dark"] .border-ink-3 { border-color: #cfc8ba; }
+html[data-theme="dark"] .border-white\/70 { border-color: rgb(255 255 255 / 0.7); }
+html[data-theme="dark"] .bg-ink,
+html[data-theme="dark"] .hover\:bg-ink:hover { background-color: #2a313b; }
+html[data-theme="dark"] header.bg-ink,
+html[data-theme="dark"] footer.bg-ink,
+html[data-theme="dark"] .on-dark.bg-ink { background-color: var(--color-ink); }
+html[data-theme="dark"] .hover\:text-ink:hover { color: #eee9df; }
+html[data-theme="dark"] .hover\:bg-ink-3:hover { background-color: #3a424d; }
+html[data-theme="dark"] .bg-pole-dark { background-color: var(--color-pole-dark); }
+html[data-theme="dark"] .skeleton { background: linear-gradient(90deg, var(--color-mist) 25%, #2c333d 50%, var(--color-mist) 75%); background-size: 200% 100%; }
+/* status badges and notices */
+html[data-theme="dark"] [class*="bg-[#e2f3ea]"] { background-color: rgb(46 158 104 / 0.2); }
+html[data-theme="dark"] [class*="bg-[#fbe5e3]"] { background-color: rgb(224 86 78 / 0.2); }
+html[data-theme="dark"] [class*="bg-[#fbeed2]"] { background-color: rgb(226 181 96 / 0.2); }
+html[data-theme="dark"] [class*="text-[#7a4f00]"] { color: #f0c36d; }
+html[data-theme="dark"] [class*="hover:bg-[#fbe5e3]"]:hover { background-color: rgb(224 86 78 / 0.2); }
+html[data-theme="dark"] body { color: #eee9df; }
+html[data-theme="dark"] .on-dark { color: #fff; }
