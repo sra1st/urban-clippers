@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Faq } from "@/components/Faq";
-import { LiveSlots } from "@/components/LiveSlots";
 import { MapGraphic } from "@/components/MapGraphic";
 import { OpenNow } from "@/components/OpenNow";
 import { Photo } from "@/components/Photo";
@@ -62,9 +61,6 @@ export default async function HomePage() {
               <Link href="/services" className={btn.outlineLight}>
                 See prices
               </Link>
-            </div>
-            <div className="mt-9">
-              <LiveSlots />
             </div>
           </div>
           <div className="relative aspect-[16/11] overflow-hidden rounded-panel bg-ink-2 md:aspect-[4/5]">
