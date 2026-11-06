@@ -68,7 +68,7 @@ export default async function HomePage() {
             </div>
           </div>
           <div className="relative aspect-[16/11] overflow-hidden rounded-panel bg-ink-2 md:aspect-[4/5]">
-            <Photo name="hero" alt="A barber's scissors, comb and razor laid out on the station" priority sizes="(min-width: 768px) 40vw, 100vw" />
+            <Photo name="hero" ext="gif" alt="A barber's scissors, comb and razor laid out on the station" priority sizes="(min-width: 768px) 40vw, 100vw" />
             <div className="pole-band absolute inset-y-0 right-0 w-3" aria-hidden="true" />
           </div>
         </div>
