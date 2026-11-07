@@ -43,8 +43,7 @@ export function ThemeToggle({ className = "", withLabel = false }: { className?:
   const [dark, toggle] = useDark();
   return (
     <button type="button" onClick={toggle} aria-pressed={dark} aria-label={dark ? "Switch to light mode" : "Switch to dark mode"} className={className}>
-      {dark ? <Sun /> : <Moon />}
-      {withLabel && <span>{dark ? "Light mode" : "Dark mode"}</span>}
+      {withLabel ? <span>{dark ? "Light mode" : "Dark mode"}</span> : dark ? <Sun /> : <Moon />}
     </button>
   );
 }
