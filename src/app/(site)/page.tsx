@@ -17,7 +17,7 @@ const TRUST = [
   { t: "Open every day", d: "10 AM to 11 PM, 7 days a week" },
   { t: "Flexible slots", d: "Always a free chair, no long waits" },
   { t: "Pay after your cut", d: "Cash, card, bKash or Nagad at the studio" },
-  { t: "Free changes", d: "Reschedule or cancel up to 2 hours before" },
+  { t: "Free changes", d: "Cancel up to 2 hours before" },
 ];
 
 const STEPS = [
