@@ -16,5 +16,3 @@ export const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encode
   `${SITE.name}, ${SITE.addressLines.join(", ")}`,
 )}`;
 
-export const DEMO_CLIENT_EMAIL = "demo-client@urbanclippers.demo";
-export const DEMO_ADMIN_EMAIL = "demo-admin@urbanclippers.demo";

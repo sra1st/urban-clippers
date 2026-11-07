@@ -2,16 +2,12 @@
 // and the nightly POST /api/cron/reset-demo. Visitors' test bookings and accounts are wiped; the demo
 // accounts, services and opening hours are restored. No sample bookings are created: the schedule starts
 // empty, so every booking you see is one that you or a visitor actually made.
-import { randomBytes } from "node:crypto";
 import bcrypt from "bcryptjs";
 import { q, withTx, x, type RowDataPacket } from "./db";
 import { pruneRateLimits } from "./rate-limit";
 import { BARBERS, HOURS, SERVICES } from "./seed-data";
-import { DEMO_ADMIN_EMAIL, DEMO_CLIENT_EMAIL } from "./site";
 
 export async function resetDemo(): Promise<{ services: number }> {
-  const clientHash = await bcrypt.hash(randomBytes(24).toString("hex"), 10);
-  const adminHash = await bcrypt.hash(randomBytes(24).toString("hex"), 10);
   const realAdminEmail = (process.env.ADMIN_EMAIL ?? "").trim().toLowerCase();
   const realAdminHash = process.env.ADMIN_PASSWORD ? await bcrypt.hash(process.env.ADMIN_PASSWORD, 10) : null;
 
@@ -22,7 +18,7 @@ export async function resetDemo(): Promise<{ services: number }> {
     await x(c, "DELETE FROM bookings");
     await x(c, "DELETE FROM barber_days_off");
     await x(c, "DELETE FROM otp_codes");
-    await x(c, "DELETE FROM users WHERE is_demo = 0 AND role = 'client'");
+    await x(c, "DELETE FROM users WHERE role = 'client' OR is_demo = 1");
 
     // 2. Barbers, services, hours back to defaults.
     // One multi-row statement per table. Every query is a network round trip to the database, and
@@ -48,7 +44,7 @@ export async function resetDemo(): Promise<{ services: number }> {
       HOURS.flatMap((h) => [h.weekday, h.closed ? 1 : 0, `${h.open}:00`, `${h.close}:00`]),
     );
 
-    // 3. Demo accounts (their passwords are random: they can only be entered with the demo buttons).
+    // 3. The private admin login, only when ADMIN_EMAIL and ADMIN_PASSWORD are set (see docs/DEPLOY.md).
     const upsertUser = async (name: string, email: string, phone: string | null, hash: string, role: "client" | "admin", demo: boolean) => {
       await x(
         c,
@@ -59,8 +55,6 @@ export async function resetDemo(): Promise<{ services: number }> {
       const [row] = await q<RowDataPacket>(c, "SELECT id FROM users WHERE email = ?", [email]);
       return Number(row.id);
     };
-    await upsertUser("Demo Client", DEMO_CLIENT_EMAIL, null, clientHash, "client", true);
-    await upsertUser("Demo Admin", DEMO_ADMIN_EMAIL, null, adminHash, "admin", true);
     if (realAdminEmail && realAdminHash) {
       await upsertUser("Studio Admin", realAdminEmail, null, realAdminHash, "admin", false);
       await x(c, "UPDATE users SET password_hash = ? WHERE email = ?", [realAdminHash, realAdminEmail]);

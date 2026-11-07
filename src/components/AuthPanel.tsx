@@ -7,7 +7,7 @@ import { btn, field, label } from "./ui";
 
 type Post = { role?: string; error?: string; demoCode?: string };
 
-/** Phone + one-time code sign-in (no email, no password). Demo accounts and staff sign-in sit underneath. */
+/** Phone + one-time code sign-in (no email, no password). The admin login sits underneath. */
 export function AuthPanel({ next }: { next: string }) {
   const router = useRouter();
   const [phone, setPhone] = useState("");
@@ -160,25 +160,6 @@ export function AuthPanel({ next }: { next: string }) {
             </div>
           </form>
         )}
-      </section>
-
-      <section aria-labelledby="demo-h" className="rounded-panel border-2 border-dashed border-ink-3 bg-white p-5">
-        <div className="flex items-center gap-2">
-          <span className="rounded-chip bg-ink px-2.5 py-0.5 text-xs font-bold uppercase tracking-wide text-white">Demo accounts</span>
-        </div>
-        <h2 id="demo-h" className="mt-3 text-xl">
-          Just looking around?
-        </h2>
-        <p className="mt-1 text-[15px] text-slate">Try the site with a shared demo account. All bookings made here are cleared every night.</p>
-        <div className="mt-4 grid gap-2.5 sm:grid-cols-2">
-          <button type="button" disabled={busy !== null} onClick={async () => { const d = await post("/api/auth/demo", { role: "client" }, "demo-client"); if (d) finish("client"); }} className={btn.dark}>
-            {busy === "demo-client" ? "Signing in..." : "Demo client"}
-          </button>
-          <button type="button" disabled={busy !== null} onClick={async () => { const d = await post("/api/auth/demo", { role: "admin" }, "demo-admin"); if (d) finish("admin"); }} className={btn.outline}>
-            {busy === "demo-admin" ? "Signing in..." : "Demo admin"}
-          </button>
-        </div>
-        <p className="mt-3 text-xs text-slate">Client: book, reschedule and cancel. Admin: schedule, barber availability, services and hours.</p>
       </section>
 
       <details className="rounded-panel border-2 border-line bg-white p-4">

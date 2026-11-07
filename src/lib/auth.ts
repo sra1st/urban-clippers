@@ -22,7 +22,6 @@ export type SessionUser = {
   email: string | null;
   phone: string;
   role: "client" | "admin";
-  isDemo: boolean;
 };
 
 export const hashPassword = (pw: string) => bcrypt.hash(pw, 10);
@@ -50,10 +49,10 @@ export const getUser = cache(async (): Promise<SessionUser | null> => {
     const { payload } = await jwtVerify(token, secret(), { algorithms: ["HS256"] });
     const id = Number(payload.sub);
     if (!Number.isInteger(id)) return null;
-    const rows = await q<RowDataPacket>(pool, "SELECT id, name, email, phone, role, is_demo FROM users WHERE id = ?", [id]);
+    const rows = await q<RowDataPacket>(pool, "SELECT id, name, email, phone, role FROM users WHERE id = ?", [id]);
     const u = rows[0];
     if (!u) return null;
-    return { id: Number(u.id), name: String(u.name), email: u.email === null ? null : String(u.email), phone: u.phone === null ? "" : String(u.phone), role: u.role === "admin" ? "admin" : "client", isDemo: Boolean(u.is_demo) };
+    return { id: Number(u.id), name: String(u.name), email: u.email === null ? null : String(u.email), phone: u.phone === null ? "" : String(u.phone), role: u.role === "admin" ? "admin" : "client" };
   } catch {
     return null;
   }

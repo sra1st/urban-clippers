@@ -16,7 +16,7 @@ export default async function BookPage({ searchParams }: { searchParams: Promise
   const services = await getServicesSafe();
   const user = await getUser().catch(() => null);
   const barbers = await listBarbers().catch(() => []);
-  const lastBarberId = user && !user.isDemo ? ((await listUserBookings(user.id).catch(() => []))[0]?.barberId ?? null) : null;
+  const lastBarberId = user ? ((await listUserBookings(user.id).catch(() => []))[0]?.barberId ?? null) : null;
 
   const valid = new Set(services.map((s) => s.id));
   const serviceIds = (one(sp.service) ?? "")
@@ -39,7 +39,7 @@ export default async function BookPage({ searchParams }: { searchParams: Promise
         groups={groups}
         barbers={barbers}
         lastBarberId={lastBarberId}
-        user={user ? { name: user.isDemo ? "" : user.name, phone: user.isDemo ? "" : user.phone } : null}
+        user={user ? { name: user.name, phone: user.phone } : null}
         preset={{ serviceIds, date, time: date ? time : null }}
         demoNotice={SITE.demoNotice}
       />

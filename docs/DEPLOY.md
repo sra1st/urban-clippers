@@ -83,14 +83,14 @@ GitHub pauses scheduled workflows in a repository that has had no activity for 6
 
 ## 6. Optional: a real admin login
 
-The demo admin button is for visitors. To also have a private admin login, set `ADMIN_EMAIL` and `ADMIN_PASSWORD` (use a long password) in `.env.local`, run `npm run db:setup` once, and sign in on the login page. Do not put these two values on Netlify.
+To have a private admin login (there is no demo admin), set `ADMIN_EMAIL` and `ADMIN_PASSWORD` (use a long password) in `.env.local`, run `npm run db:setup` once, and sign in on the login page. Do not put these two values on Netlify.
 
 ## 7. Before you share the link
 
 - Load the live site a minute before recording or sharing, in case the free database was idle.
 - Replace the placeholder phone, address and email in `src/lib/site.ts` with details you control, or leave the clearly fictional ones.
 - Add real photos (see PHOTOS.md).
-- Book once as a guest, then sign in as demo admin and check the booking appears with a barber name.
+- Book once as a guest, then sign in with your admin login and check the booking appears with a barber name.
 - Run Lighthouse (Chrome DevTools) on the home page on mobile.
 
 ## 8. Record the Upwork video and GIF

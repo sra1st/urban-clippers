@@ -5,7 +5,7 @@ A booking website for a men's grooming studio in Dhaka. Visitors pick services, 
 > Portfolio project by Shafiq Rahman Adi. The business, prices and contact details are fictional. Bookings are not real.
 
 **Live demo:** _add your Netlify link here_  
-**Demo accounts:** the login page has two labelled buttons, "Demo client" and "Demo admin". The demo starts with no sample bookings; whatever is booked is cleared every night.
+**Sign in:** customers use their phone number and a one-time code; the studio uses a private admin login. The demo starts with no sample bookings, and whatever is booked is cleared every night.
 
 ![Booking flow](docs/demo.gif)
 

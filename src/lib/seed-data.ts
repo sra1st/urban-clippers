@@ -43,23 +43,3 @@ export const HOURS = Array.from({ length: 7 }, (_, weekday) => ({
 export const WEEKDAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 /** Invented customers for the demo schedule. */
-export const DEMO_CUSTOMERS = [
-  "Sabbir Hossain",
-  "Tanvir Ahmed",
-  "Nayeem Islam",
-  "Rakib Chowdhury",
-  "Shahriar Alam",
-  "Mahin Rahman",
-  "Faisal Karim",
-  "Arif Mahmud",
-  "Zubayer Hasan",
-  "Ishtiaq Sarker",
-  "Hridoy Talukder",
-  "Sakib Mia",
-  "Nabil Khandaker",
-  "Fahim Reza",
-  "Mehedi Sikder",
-  "Asif Uddin",
-  "Rony Biswas",
-  "Shuvo Paul",
-];

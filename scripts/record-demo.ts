@@ -77,14 +77,19 @@ async function main() {
   await page.waitForURL("**/booking/**", { timeout: 20000 });
   await pause(6500);
 
-  // 6. Admin side (demo account)
-  await page.goto(BASE + "/login", { waitUntil: "networkidle" });
-  await pause(1200);
-  await page.getByRole("button", { name: /demo admin/i }).first().click();
-  await page.waitForURL("**/admin**", { timeout: 20000 });
-  await pause(4000);
-  await page.mouse.wheel(0, 500);
-  await pause(3500);
+  // 6. Admin side (needs ADMIN_EMAIL and ADMIN_PASSWORD in .env.local, created by npm run db:setup)
+  if (process.env.ADMIN_EMAIL && process.env.ADMIN_PASSWORD) {
+    await page.goto(BASE + "/login", { waitUntil: "networkidle" });
+    await pause(1200);
+    await page.getByText("Admin login").click();
+    await page.getByLabel("Username").fill(process.env.ADMIN_EMAIL);
+    await page.getByLabel("Password").fill(process.env.ADMIN_PASSWORD);
+    await page.getByRole("button", { name: /sign in/i }).last().click();
+    await page.waitForURL("**/admin**", { timeout: 20000 });
+    await pause(4000);
+    await page.mouse.wheel(0, 500);
+    await pause(3500);
+  }
 
   const video = page.video();
   await ctx.close();

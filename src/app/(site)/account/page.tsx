@@ -28,7 +28,6 @@ export default async function AccountPage() {
           <h1 className="text-4xl sm:text-5xl">My bookings</h1>
           <p className="mt-2 text-slate">
             {user.name || prettyPhone(user.phone)}
-            {user.isDemo && <span className="ml-2 rounded-chip bg-ink px-2.5 py-0.5 text-xs font-bold uppercase tracking-wide text-white">Demo account</span>}
           </p>
         </div>
         <SignOutButton className="min-h-11 rounded-control px-3 font-semibold text-slate hover:bg-mist hover:text-ink" />

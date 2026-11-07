@@ -30,11 +30,6 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         </div>
         <AdminNav />
       </header>
-      {user.isDemo && (
-        <p className="bg-pole px-4 py-2 text-center text-sm font-semibold text-ink">
-          Demo admin account. Anything you change here is wiped and reset every night, so feel free to click around.
-        </p>
-      )}
       <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">{children}</main>
     </div>
   );
