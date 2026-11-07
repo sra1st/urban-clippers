@@ -42,8 +42,8 @@ export default async function HomePage() {
   return (
     <>
       {/* Hero */}
-      <section className="on-dark bg-ink text-white">
-        <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 pb-14 pt-10 sm:px-6 md:grid-cols-[1.1fr_0.9fr] md:gap-12 md:py-20">
+      <section className="on-dark flex min-h-[calc(100svh-4rem)] items-center bg-ink text-white">
+        <div className="mx-auto grid w-full max-w-6xl items-center gap-10 px-4 pb-14 pt-10 sm:px-6 md:grid-cols-[1.1fr_0.9fr] md:gap-12 md:py-20">
           <div>
             <OpenNow hours={hours} />
             <h1 className="mt-5 text-[2.9rem] sm:text-6xl lg:text-7xl">
