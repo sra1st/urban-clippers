@@ -54,11 +54,24 @@ export async function Footer() {
           </ul>
         </div>
       </div>
-      <div className="mx-auto mt-12 max-w-6xl border-t border-white/10 px-4 pt-6 text-sm text-white/55 sm:px-6">
-        <p>
-          &copy; {new Date().getFullYear()} {SITE.name}.
-          {SITE.demoNotice && " Portfolio demo project: bookings are not real and data resets daily."}
-        </p>
+           <div className="mx-auto mt-12 max-w-6xl border-t border-white/10 px-4 pt-6 text-sm text-white/55 sm:px-6">
+        <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-4">
+          <p>
+            &copy; {new Date().getFullYear()} {SITE.name}.
+            {SITE.demoNotice && " Portfolio demo project: bookings are not real and data resets daily."}
+          </p>
+          <span aria-hidden="true" className="hidden text-white/30 sm:inline">
+            |
+          </span>
+          <a
+            href="https://github.com/sra1st"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-fit font-semibold text-white/75 underline-offset-4 hover:text-white hover:underline"
+          >
+            github.com/sra1st
+          </a>
+        </div>
       </div>
     </footer>
   );
