@@ -177,13 +177,13 @@ export function AuthPanel({ next }: { next: string }) {
             <label htmlFor="s-email" className={label}>
               Username
             </label>
-            <input id="s-email" className={field} type="text" autoCapitalize="none" autoCorrect="off" spellCheck={false} autoComplete="username" value={staff.email} onChange={(e) => setStaff((s) => ({ ...s, email: e.target.value }))} />
+            <input id="s-email" className={field} type="text" autoCapitalize="none" autoCorrect="off" spellCheck={false} autoComplete="username" placeholder={process.env.NEXT_PUBLIC_ADMIN_HINT_USER} value={staff.email} onChange={(e) => setStaff((s) => ({ ...s, email: e.target.value }))} />
           </div>
           <div>
             <label htmlFor="s-pass" className={label}>
               Password
             </label>
-            <input id="s-pass" className={field} type="password" autoComplete="current-password" value={staff.password} onChange={(e) => setStaff((s) => ({ ...s, password: e.target.value }))} />
+            <input id="s-pass" className={field} type="password" autoComplete="current-password" placeholder={process.env.NEXT_PUBLIC_ADMIN_HINT_PASS} value={staff.password} onChange={(e) => setStaff((s) => ({ ...s, password: e.target.value }))} />
           </div>
           <button type="submit" disabled={busy !== null} className={btn.dark}>
             {busy === "staff" ? "One moment..." : "Sign in"}

@@ -56,6 +56,7 @@ export async function resetDemo(): Promise<{ services: number }> {
       return Number(row.id);
     };
     if (realAdminEmail && realAdminHash) {
+       await x(c, "DELETE FROM users WHERE role = 'admin' AND email <> ?", [realAdminEmail]);
       await upsertUser("Studio Admin", realAdminEmail, null, realAdminHash, "admin", false);
       await x(c, "UPDATE users SET password_hash = ? WHERE email = ?", [realAdminHash, realAdminEmail]);
     }
