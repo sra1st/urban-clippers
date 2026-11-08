@@ -29,7 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" suppressHydrationWarning>
       <head>
         {/* Applies a saved dark-mode choice before the first paint, so there is no light flash. */}
-        <script dangerouslySetInnerHTML={{ __html: "try{if(localStorage.getItem('uc-theme')==='dark')document.documentElement.dataset.theme='dark'}catch(e){}" }} />
+        <script dangerouslySetInnerHTML={{ __html: "var t;try{t=localStorage.getItem('uc-theme')}catch(e){}if(t!=='light')document.documentElement.dataset.theme='dark'" }} />
       </head>
       <body className="flex min-h-dvh flex-col">{children}</body>
     </html>

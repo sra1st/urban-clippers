@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { MAX_SERVICES_PER_BOOKING } from "@/lib/config";
 import { hoursLabel, visitHours } from "@/lib/duration";
 import { normalizePhone } from "@/lib/phone";
@@ -54,10 +54,37 @@ export function BookingFlow({
 
   const canContinue = step === 1 ? ids.length > 0 : step === 2 ? Boolean(date && time) : step === 3 ? nameOk && Boolean(normalized) : true;
 
+  // Each step gets its own browser-history entry, so the browser's Back button goes to the previous step
+  // instead of leaving the booking page. `base` is the first step that has an entry.
+  const base = useRef(step);
+  useEffect(() => {
+    window.history.replaceState({ ...window.history.state, ucStep: base.current }, "");
+    const onPop = (e: PopStateEvent) => {
+      const s = (e.state as { ucStep?: number } | null)?.ucStep;
+      if (typeof s === "number") {
+        setStep(s);
+        setTried(false);
+        top.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
+
   function go(n: number) {
-    setStep(n);
+    if (n === step) return;
     setError(null);
     setTried(false);
+    if (n > step) {
+      window.history.pushState({ ...window.history.state, ucStep: n }, "");
+      setStep(n);
+    } else if (n >= base.current) {
+      window.history.go(n - step); // the popstate listener shows the earlier step
+    } else {
+      window.history.replaceState({ ...window.history.state, ucStep: n }, "");
+      base.current = n;
+      setStep(n);
+    }
     top.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
@@ -102,6 +129,7 @@ export function BookingFlow({
         setLostTime(time);
         setTime(null);
         setRefreshKey((k) => k + 1);
+        window.history.replaceState({ ...window.history.state, ucStep: 2 }, "");
         setStep(2);
         setError(
           barber
