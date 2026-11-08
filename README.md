@@ -5,6 +5,7 @@ A booking website for a men's grooming studio in Dhaka. Visitors pick services, 
 > Portfolio project by Shafiq Rahman Adi. The business, prices and contact details are fictional. Bookings are not real.
 
 **Live demo:** (https://urbanclippers.netlify.app/)
+
 **Sign in:** customers use their phone number and a one-time code; the studio uses a private admin login. The demo starts with no sample bookings, and whatever is booked is cleared every night.
 
 ![Booking flow](docs/demo.gif)
