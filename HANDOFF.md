@@ -19,7 +19,8 @@ Built and working (tested locally, 49 automated checks pass, typecheck and lint 
 - Share preview image (Open Graph and Twitter), icon, hero GIF with SVG fallback, one-line mobile header, footer with GitHub link (github.com/sra1st).
 - Demo reset: nightly GitHub Action wipes bookings and visitor accounts and restores services, hours, barbers. No seeded sample bookings (removed on request). Demo admin and demo client accounts were removed on request.
 In progress: nothing half-edited. Last thing done: footer GitHub link, pushed.
-Not started: real SMS provider hookup, barbers admin page, "+1 hr" tags on service cards, "Meet the barbers" row, privacy line, women's-salon demo variant, permanent booking delete.
+- "+1 hr" tags (booking list, price board), "Meet the barbers" row on home (specialty lines are placeholders), privacy wording on sign-in and booking details. Pushed 2026-11-10.
+Not started: real SMS provider hookup, barbers admin page, women's-salon demo variant, permanent booking delete.
 
 ## 3. STACK and ARCHITECTURE
 - Next.js 16 (App Router, Turbopack) with React 19 and TypeScript. IMPORTANT: this Next.js has breaking changes versus older versions; the repo's AGENTS.md says to read node_modules/next/dist/docs before writing framework code.
@@ -115,7 +116,7 @@ Note: docs/demo.gif is intentionally NOT in the zip; Adi's repo has his newer GI
 
 ## 8. NEXT STEPS (in order)
 1. Check the live site on a real phone: footer GitHub link, hero fit, dark default, booking with a chosen barber, browser Back between steps, admin hint login (admin / 1234 on the demo only).
-2. Add "+1 hr" tags to facial and hair-care items in the price board and booking list, and a small "Meet the barbers" row (names and one-line specialties, no real photos), so barber choice has context. Add a short privacy line near sign-in and booking.
+2. DONE (2026-11-10): +1 hr tags, Meet the barbers row, privacy wording.
 3. When a salon is interested: connect a real SMS provider by changing the fetch in src/lib/sms.ts to the provider's API (sms.bd is the recommendation, test delivery first), add its key as a Netlify variable, remove OTP_DEMO_MODE, redeploy.
 4. Add an admin page to manage barbers (add, rename, deactivate) and a permanent-delete option, so a salon owner needs no code change.
 5. Prepare the resale kit: a women's/unisex salon variant (services in seed-data.ts, wording and colours in site.ts and globals.css), a per-salon setup checklist (new Netlify site, new TiDB database, admin login, turn off the nightly reset and demo notice), and outreach by WhatsApp first, Facebook DM as fallback, using the warm pitch below.
