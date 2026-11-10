@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ServiceRow } from "@/lib/bookings";
 import { groupByCategory } from "@/lib/data";
+import { ADDON_CATEGORIES } from "@/lib/duration";
 import { formatBDT } from "@/lib/time";
 
 /** The price list, laid out like a barbershop board: name, dotted leader, price. */
@@ -17,7 +18,10 @@ export function PriceBoard({ services, withBookLinks = false }: { services: Serv
             {g.items.map((s) => (
               <li key={s.id} className="py-3">
                 <div className="price-row">
-                  <span className="font-semibold">{s.name}</span>
+                  <span className="font-semibold">
+                    {s.name}
+                    {ADDON_CATEGORIES.has(g.category) && <span className="ml-2 rounded-chip bg-mist px-2 py-0.5 align-middle text-xs font-bold text-slate">+1 hr</span>}
+                  </span>
                   <span className="leader" aria-hidden="true" />
                   <span className="font-display text-lg font-bold tabular-nums">{formatBDT(s.price)}</span>
                 </div>

@@ -6,6 +6,7 @@ import { Photo } from "@/components/Photo";
 import { btn } from "@/components/ui";
 import { getHoursSafe, getServicesSafe } from "@/lib/data";
 import { hoursLines } from "@/lib/hours-format";
+import { BARBERS } from "@/lib/seed-data";
 import { mapsUrl, SITE } from "@/lib/site";
 import { formatBDT } from "@/lib/time";
 
@@ -155,6 +156,25 @@ export default async function HomePage() {
             ))}
           </ul>
         </div>
+      </section>
+
+      {/* Barbers */}
+      <section className="mx-auto max-w-6xl px-4 pb-16 sm:px-6 md:pb-20" aria-labelledby="team">
+        <h2 id="team" className="text-4xl sm:text-5xl">
+          Meet the barbers
+        </h2>
+        <p className="mt-2 max-w-xl text-slate">Pick your own when you book, or let us assign whoever is free.</p>
+        <ul className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
+          {BARBERS.map((b) => (
+            <li key={b.id} className="rounded-panel border-2 border-line bg-white p-5">
+              <span className="grid size-12 place-items-center rounded-full bg-ink font-display text-xl font-extrabold text-white" aria-hidden="true">
+                {b.name.slice(0, 1)}
+              </span>
+              <h3 className="mt-3 text-xl">{b.name}</h3>
+              <p className="mt-1 text-[15px] text-slate">{b.note}</p>
+            </li>
+          ))}
+        </ul>
       </section>
 
       {/* Gallery preview */}

@@ -88,7 +88,7 @@ export function AuthPanel({ next }: { next: string }) {
                 onChange={(e) => setPhone(e.target.value)}
                 autoFocus
               />
-              <p className="mt-1.5 text-sm text-slate">We&apos;ll text you a 6-digit code. No password, no email. New here? Your account is created automatically.</p>
+              <p className="mt-1.5 text-sm text-slate">We&apos;ll text you a 6-digit code. No password, no email. New here? Your account is created automatically. We use your number only for sign-in and your bookings, and never share it.</p>
             </div>
             {error && (
               <p role="alert" className="font-semibold text-bad">

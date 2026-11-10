@@ -9,10 +9,10 @@ export type SeedService = {
 };
 
 export const BARBERS = [
-  { id: 1, name: "Roton" },
-  { id: 2, name: "Anis" },
-  { id: 3, name: "Akhter" },
-  { id: 4, name: "Sohel" },
+  { id: 1, name: "Roton", note: "Classic cuts and clean scissor work." },
+  { id: 2, name: "Anis", note: "Skin fades and sharp line-ups." },
+  { id: 3, name: "Akhter", note: "Beard shaping and hot towel shaves." },
+  { id: 4, name: "Sohel", note: "Kids cuts and relaxed head massages." },
 ];
 
 export const CATEGORIES = ["Haircuts", "Beard and shave", "Facial and skin", "Hair care", "Massage", "Packages"];

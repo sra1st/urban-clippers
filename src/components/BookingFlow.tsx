@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { MAX_SERVICES_PER_BOOKING } from "@/lib/config";
-import { hoursLabel, visitHours } from "@/lib/duration";
+import { ADDON_CATEGORIES, hoursLabel, visitHours } from "@/lib/duration";
 import { normalizePhone } from "@/lib/phone";
 import { addHoursTo, formatBDT, formatDayLong, formatTime12 } from "@/lib/time";
 import { SlotPicker } from "./SlotPicker";
@@ -266,7 +266,10 @@ export function BookingFlow({
                               </span>
                               <span className="min-w-0 flex-1">
                                 <span className="flex items-baseline justify-between gap-3">
-                                  <span className="font-semibold leading-snug">{s.name}</span>
+                                  <span className="font-semibold leading-snug">
+                                    {s.name}
+                                    {ADDON_CATEGORIES.has(g.category) && <span className="ml-2 rounded-chip bg-mist px-2 py-0.5 align-middle text-xs font-bold text-slate">+1 hr</span>}
+                                  </span>
                                   <span className="font-display font-bold tabular-nums">{formatBDT(s.price)}</span>
                                 </span>
                                 <span className="mt-0.5 block text-sm leading-snug text-slate">{s.description}</span>
@@ -375,7 +378,7 @@ export function BookingFlow({
                     aria-describedby="phone-hint"
                   />
                   <p id="phone-hint" className={`mt-1.5 text-sm ${tried && !normalized ? "font-semibold text-bad" : "text-slate"}`}>
-                    {tried && !normalized ? "That doesn't look right. Use a Bangladesh mobile number like 01712 345 678." : "We use it to find your booking. We won't send spam."}
+                    {tried && !normalized ? "That doesn't look right. Use a Bangladesh mobile number like 01712 345 678." : "We use it only to find and confirm your booking. We never share or sell it."}
                   </p>
                 </div>
                 {!user && (
